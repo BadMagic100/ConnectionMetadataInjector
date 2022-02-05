@@ -26,6 +26,13 @@ jobs:
         run: |
             Invoke-WebRequest -Uri "https://files.catbox.moe/ut01ee.zip" -OutFile API.zip
             Expand-Archive -Path API.zip -DestinationPath API
+            Get-Content ConnectionMetadataInjector\ModDependencies.txt | ForEach-Object {
+                $folder,$uri = ($_ -split ' from ')[0,1]
+                Invoke-WebRequest -Uri $uri -OutFile tmp.zip
+                mkdir API\Mods
+                Expand-Archive -Path tmp.zip -DestinationPath "API\Mods\$folder"
+                Remove-Item tmp.zip
+            }
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
