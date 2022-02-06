@@ -59,8 +59,17 @@ namespace ConnectionMetadataInjector
         /// <param name="obj">The object</param>
         public static SupplementalMetadata<TObject> Of<TObject>(TObject obj) where TObject : TaggableObject
         {
-            IEnumerable<InteropTag> tags = obj.GetTags<InteropTag>().Where(t => t.Message == InteropTagMessage);
-            return new SupplementalMetadata<TObject>(obj, tags.FirstOrDefault());
+            IEnumerable<Tag> allTags;
+            if (obj is AbstractPlacement plt)
+            {
+                allTags = plt.GetPlacementAndLocationTags();
+            }
+            else
+            {
+                allTags = obj.tags;
+            }
+            IEnumerable<InteropTag> metaTags = allTags.OfType<InteropTag>().Where(t => t.Message == InteropTagMessage);
+            return new SupplementalMetadata<TObject>(obj, metaTags.FirstOrDefault());
         }
     }
 }
