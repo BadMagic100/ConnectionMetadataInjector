@@ -23,9 +23,9 @@ namespace ConnectionMetadataInjector
         /// </summary>
         public readonly MetadataProperty<AbstractPlacement, string> LocationPoolGroup;
         /// <summary>
-        /// A property representing the map area of a placement
+        /// A property representing the room defined RandomizerData that best approximates the in-world location of a placement
         /// </summary>
-        public readonly MetadataProperty<AbstractPlacement, string> LocationMapArea;
+        public readonly MetadataProperty<AbstractPlacement, string> LocationNearestRoom;
 
         /// <inheritdoc/>
         public override string GetVersion() => GetType().Assembly.GetName().Version.ToString();
@@ -39,9 +39,10 @@ namespace ConnectionMetadataInjector
 
             ItemPoolGroup = new MetadataProperty<AbstractItem, string>("PoolGroup", GetDefaultItemPoolGroup);
             LocationPoolGroup = new MetadataProperty<AbstractPlacement, string>("PoolGroup", GetDefaultLocationPoolGroup);
-            LocationMapArea = new MetadataProperty<AbstractPlacement, string>("MapArea", GetDefaultLocationMapArea);
+            LocationNearestRoom = new MetadataProperty<AbstractPlacement, string>("NearestRoom", GetDefaultLocationNearestRoom);
         }
 
+        /// <inheritdoc/>
         public override void Initialize()
         {
             On.GameCompletionScreen.Start += GameCompletionScreen_Start;
@@ -56,13 +57,14 @@ namespace ConnectionMetadataInjector
             LogGroupCounts(itemPools);
 
             IEnumerable<IGrouping<string, string>> locationPools = Ref.Settings.GetPlacements()
-                .Select(plt => SupplementalMetadata.Of(plt).Get(LocationPoolGroup))
+                .Select(plt => SupplementalMetadata.OfPlacementAndLocations(plt).Get(LocationPoolGroup))
                 .GroupBy(x => x);
             Log("Location counts by pool group:");
             LogGroupCounts(locationPools);
 
             IEnumerable<IGrouping<string, string>> locationAreas = Ref.Settings.GetPlacements()
-                .Select(plt => SupplementalMetadata.Of(plt).Get(LocationMapArea))
+                .Select(plt => SupplementalMetadata.OfPlacementAndLocations(plt).Get(LocationNearestRoom))
+                .Select(room => SubcategoryFinder.GetRoomMapArea(room))
                 .GroupBy(x => x);
             Log("Location counts by map area:");
             LogGroupCounts(locationAreas);
@@ -88,9 +90,9 @@ namespace ConnectionMetadataInjector
             return SubcategoryFinder.GetLocationPoolGroup(placement.Items.First().RandoLocation()).FriendlyName();
         }
 
-        private string GetDefaultLocationMapArea(AbstractPlacement placement)
+        private string GetDefaultLocationNearestRoom(AbstractPlacement placement)
         {
-            return SubcategoryFinder.GetLocationMapArea(placement.Items.First().RandoLocation());
+            return SubcategoryFinder.GetLocationNearestRoom(placement.Items.First().RandoLocation());
         }
     }
 }

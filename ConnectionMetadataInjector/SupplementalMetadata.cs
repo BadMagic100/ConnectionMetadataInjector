@@ -59,17 +59,19 @@ namespace ConnectionMetadataInjector
         /// <param name="obj">The object</param>
         public static SupplementalMetadata<TObject> Of<TObject>(TObject obj) where TObject : TaggableObject
         {
-            IEnumerable<Tag> allTags;
-            if (obj is AbstractPlacement plt)
-            {
-                allTags = plt.GetPlacementAndLocationTags();
-            }
-            else
-            {
-                allTags = obj.tags;
-            }
-            IEnumerable<InteropTag> metaTags = allTags.OfType<InteropTag>().Where(t => t.Message == InteropTagMessage);
+            IEnumerable<InteropTag> metaTags = obj.GetTags<InteropTag>().Where(t => t.Message == InteropTagMessage);
             return new SupplementalMetadata<TObject>(obj, metaTags.FirstOrDefault());
+        }
+
+        /// <summary>
+        /// Gets the supplemental metadata of a placement and its underlying location(s). If you were thinking of using
+        /// <see cref="Of{TObject}(TObject)"/> to get information about an <see cref="AbstractLocation"/>, you probably want this instead.
+        /// </summary>
+        /// <param name="plt">The placement</param>
+        public static SupplementalMetadata<AbstractPlacement> OfPlacementAndLocations(AbstractPlacement plt)
+        {
+            IEnumerable<InteropTag> metaTags = plt.GetPlacementAndLocationTags().OfType<InteropTag>().Where(t => t.Message == InteropTagMessage);
+            return new SupplementalMetadata<AbstractPlacement>(plt, metaTags.FirstOrDefault());
         }
     }
 }

@@ -18,6 +18,8 @@ namespace ConnectionMetadataInjector.Util
 			"Leg_Eater", "Grubfather", "Seer", "Egg_Shop"
 		});
 
+		public const string OTHER = "Other";
+
 		/// <summary>
 		/// Gets the pool group of a rando item by its name. You probably want to be using <see cref="ConnectionMetadataInjector.ItemPoolGroup"/> to handle custom items.
 		/// </summary>
@@ -81,17 +83,46 @@ namespace ConnectionMetadataInjector.Util
 		}
 
 		/// <summary>
-		/// Gets the map area of a rando location. You probably want to be using <see cref="ConnectionMetadataInjector.LocationMapArea"/> to handle custom locations.
+		/// Gets the room name (defined in RandomizerData) of the scene that best approximates the area of a location. You probably want to be using
+		/// <see cref="ConnectionMetadataInjector.LocationNearestRoom"/> to handle custom locations.
 		/// </summary>
 		/// <param name="location">The location name, e.g. "Mimic_Grub-Crystal_Peak" or "Isma's_Tear"</param>
-		public static string GetLocationMapArea(string location)
-		{
+		/// <returns></returns>
+		public static string GetLocationNearestRoom(string location)
+        {
 			if (Data.IsLocation(location))
-			{
-				return Data.GetLocationDef(location).MapArea;
-			}
-			return "Other";
-		}
+            {
+				return Data.GetLocationDef(location).SceneName;
+            }
+			log.LogWarn($"{location} not found in LocationDefs");
+			return OTHER;
+        }
+
+		/// <summary>
+		/// Gets the titled area of a rando room
+		/// </summary>
+		/// <param name="room">The room name defined in RandomizerData</param>
+		public static string GetRoomTitledArea(string room)
+        {
+			if (Data.IsRoom(room))
+            {
+				return Data.GetRoomDef(room).TitledArea;
+            }
+			return OTHER;
+        }
+
+		/// <summary>
+		/// Gets the map area of a rando room
+		/// </summary>
+		/// <param name="room">The room name defined in RandomizerData</param>
+		public static string GetRoomMapArea(string room)
+        {
+			if (Data.IsRoom(room))
+            {
+				return Data.GetRoomDef(room).MapArea;
+            }
+			return OTHER;
+        }
 
 		/// <summary>
 		/// Gets the map area of a transition. Transitions aren't taggable, so use this if needed; transitions in custom map areas will always return "Other"
@@ -103,7 +134,8 @@ namespace ConnectionMetadataInjector.Util
 			{
 				return Data.GetTransitionDef(transition).MapArea;
 			}
-			return "Other";
+			log.LogWarn($"{transition} not found in TransitionDefs");
+			return OTHER;
 		}
 	}
 }
