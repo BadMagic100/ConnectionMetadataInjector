@@ -2,6 +2,7 @@
 using ItemChanger;
 using ItemChanger.Internal;
 using Modding;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -69,7 +70,31 @@ namespace ConnectionMetadataInjector
             Log("Location counts by map area:");
             LogGroupCounts(locationAreas);
 
+            HashSet<string> connectionProvidedItemPools = GetConnectionProvidedValues(Ref.Settings.GetItems(), 
+                SupplementalMetadata.Of<AbstractItem>, ItemPoolGroup);
+            Log($"Connection-provided item pools: {string.Join(", ", connectionProvidedItemPools)}");
+
+            HashSet<string> connectionprovidedLocationPools = GetConnectionProvidedValues(Ref.Settings.GetPlacements(),
+                SupplementalMetadata.OfPlacementAndLocations, LocationPoolGroup);
+            Log($"Connection-provided item locations: {string.Join(", ", connectionprovidedLocationPools)}");
+
+            HashSet<string> connectionProvidedMapAreas = GetConnectionProvidedValues(Ref.Settings.GetPlacements(),
+                SupplementalMetadata.OfPlacementAndLocations, LocationNearestRoom);
+            Log($"Connection-provided map areas: {string.Join(", ", connectionProvidedMapAreas.Select(SubcategoryFinder.GetRoomMapArea))}");
+
             orig(self);
+        }
+
+        private HashSet<TValue> GetConnectionProvidedValues<TObject, TValue>(
+            IEnumerable<TObject> objects,
+            Func<TObject, SupplementalMetadata<TObject>> metadataSelector,
+            MetadataProperty<TObject, TValue> prop) where TObject : TaggableObject
+        {
+            return new HashSet<TValue>(objects
+                .Select(item => metadataSelector(item))
+                .Where(md => md.IsNonDefault(prop))
+                .Select(md => md.Get(prop))
+            );
         }
 
         private void LogGroupCounts(IEnumerable<IGrouping<string, string>> groups)
