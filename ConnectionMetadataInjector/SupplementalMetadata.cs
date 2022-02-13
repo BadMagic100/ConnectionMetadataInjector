@@ -21,12 +21,26 @@ namespace ConnectionMetadataInjector
         }
 
         /// <summary>
+        /// Gets whether the given property has a non-default value in this metadata
+        /// </summary>
+        /// <typeparam name="TValue">The type of the property's value</typeparam>
+        /// <param name="property">The property to check the value of</param>
+        /// <returns>
+        /// True, if this object contains a supplmental metadata tag with the requested property.
+        /// Otherwise, false.
+        /// </returns>
+        public bool IsNonDefault<TValue>(MetadataProperty<TObject, TValue> property)
+        {
+            return tag != null && tag.TryGetProperty(property.Name, out TValue _);
+        }
+
+        /// <summary>
         /// Gets the value of a property in this metadata
         /// </summary>
         /// <typeparam name="TValue">The type of the property's value</typeparam>
         /// <param name="property">The property to get the value of</param>
         /// <returns>
-        /// The value of the property, if this object contains a supplemental metadata tag and that tag contains the requested property.
+        /// The value of the property, if this object contains a supplemental metadata tag with the requested property.
         /// Otherwise, returns the default value of the property for this object.
         /// </returns>
         public TValue Get<TValue>(MetadataProperty<TObject, TValue> property)
