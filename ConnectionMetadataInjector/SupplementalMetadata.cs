@@ -12,9 +12,9 @@ namespace ConnectionMetadataInjector
     public class SupplementalMetadata<TObject> where TObject : TaggableObject
     {
         private readonly TObject obj;
-        private readonly InteropTag? tag;
+        private readonly IInteropTag? tag;
 
-        internal SupplementalMetadata(TObject obj, InteropTag? tag)
+        internal SupplementalMetadata(TObject obj, IInteropTag? tag)
         {
             this.obj = obj;
             this.tag = tag;
@@ -73,7 +73,7 @@ namespace ConnectionMetadataInjector
         /// <param name="obj">The object</param>
         public static SupplementalMetadata<TObject> Of<TObject>(TObject obj) where TObject : TaggableObject
         {
-            IEnumerable<InteropTag> metaTags = obj.GetTags<InteropTag>().Where(t => t.Message == InteropTagMessage);
+            IEnumerable<IInteropTag> metaTags = obj.GetTags<IInteropTag>().Where(t => t.Message == InteropTagMessage);
             return new SupplementalMetadata<TObject>(obj, metaTags.FirstOrDefault());
         }
 
@@ -84,7 +84,7 @@ namespace ConnectionMetadataInjector
         /// <param name="plt">The placement</param>
         public static SupplementalMetadata<AbstractPlacement> OfPlacementAndLocations(AbstractPlacement plt)
         {
-            IEnumerable<InteropTag> metaTags = plt.GetPlacementAndLocationTags().OfType<InteropTag>().Where(t => t.Message == InteropTagMessage);
+            IEnumerable<IInteropTag> metaTags = plt.GetPlacementAndLocationTags().OfType<IInteropTag>().Where(t => t.Message == InteropTagMessage);
             return new SupplementalMetadata<AbstractPlacement>(plt, metaTags.FirstOrDefault());
         }
     }
