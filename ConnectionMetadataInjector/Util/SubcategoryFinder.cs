@@ -7,7 +7,7 @@ namespace ConnectionMetadataInjector.Util
 {
     /// <summary>
     /// Utility class to find subcategories for named rando items and locations with a sensible default value when none could be inferred.
-	/// These are used as default implementations of 
+	/// These are used as default implementations of some built-in metadata properties.
     /// </summary>
     public static class SubcategoryFinder
 	{
@@ -18,6 +18,9 @@ namespace ConnectionMetadataInjector.Util
 			"Leg_Eater", "Grubfather", "Seer", "Egg_Shop"
 		});
 
+		/// <summary>
+		/// A catchall subcategory to use as a default value when none could be found
+		/// </summary>
 		public const string OTHER = "Other";
 
 		/// <summary>
@@ -81,48 +84,6 @@ namespace ConnectionMetadataInjector.Util
 			string nameWithoutLocation = location.Split('-')[0];
 			return GetItemPoolGroup(nameWithoutLocation);
 		}
-
-		/// <summary>
-		/// Gets the room name (defined in RandomizerData) of the scene that best approximates the area of a location. You probably want to be using
-		/// <see cref="ConnectionMetadataInjector.LocationNearestRoom"/> to handle custom locations.
-		/// </summary>
-		/// <param name="location">The location name, e.g. "Mimic_Grub-Crystal_Peak" or "Isma's_Tear"</param>
-		/// <returns></returns>
-		public static string GetLocationNearestRoom(string location)
-        {
-			if (Data.IsLocation(location))
-            {
-				return Data.GetLocationDef(location).SceneName;
-            }
-			log.LogWarn($"{location} not found in LocationDefs");
-			return OTHER;
-        }
-
-		/// <summary>
-		/// Gets the titled area of a rando room
-		/// </summary>
-		/// <param name="room">The room name defined in RandomizerData</param>
-		public static string GetRoomTitledArea(string room)
-        {
-			if (Data.IsRoom(room))
-            {
-				return Data.GetRoomDef(room).TitledArea;
-            }
-			return OTHER;
-        }
-
-		/// <summary>
-		/// Gets the map area of a rando room
-		/// </summary>
-		/// <param name="room">The room name defined in RandomizerData</param>
-		public static string GetRoomMapArea(string room)
-        {
-			if (Data.IsRoom(room))
-            {
-				return Data.GetRoomDef(room).MapArea;
-            }
-			return OTHER;
-        }
 
 		/// <summary>
 		/// Gets the map area of a transition. Transitions aren't taggable, so use this if needed; transitions in custom map areas will always return "Other"

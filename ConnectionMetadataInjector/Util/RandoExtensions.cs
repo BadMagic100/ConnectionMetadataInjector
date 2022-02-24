@@ -1,6 +1,6 @@
 ﻿using ItemChanger;
-using RandomizerCore;
 using RandomizerMod.IC;
+using RandomizerMod.RC;
 
 namespace ConnectionMetadataInjector.Util
 {
@@ -26,7 +26,7 @@ namespace ConnectionMetadataInjector.Util
         /// </summary>
         public static string RandoItem(this AbstractItem item)
         {
-            return item.RandoPlacement().item.Name ?? "";
+            return item.RandoPlacement().Item.Name ?? "";
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace ConnectionMetadataInjector.Util
         /// </summary>
         public static string RandoLocation(this AbstractItem item)
         {
-            return item.RandoPlacement().location.Name ?? "";
+            return item.RandoPlacement().Location.Name ?? "";
         }
     }
 }

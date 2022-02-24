@@ -23,10 +23,6 @@ namespace ConnectionMetadataInjector
         /// A property representing the location of a placement
         /// </summary>
         public readonly MetadataProperty<AbstractPlacement, string> LocationPoolGroup;
-        /// <summary>
-        /// A property representing the room defined RandomizerData that best approximates the in-world location of a placement
-        /// </summary>
-        public readonly MetadataProperty<AbstractPlacement, string> LocationNearestRoom;
 
         /// <inheritdoc/>
         public override string GetVersion() => GetType().Assembly.GetName().Version.ToString();
@@ -40,7 +36,6 @@ namespace ConnectionMetadataInjector
 
             ItemPoolGroup = new MetadataProperty<AbstractItem, string>("PoolGroup", GetDefaultItemPoolGroup);
             LocationPoolGroup = new MetadataProperty<AbstractPlacement, string>("PoolGroup", GetDefaultLocationPoolGroup);
-            LocationNearestRoom = new MetadataProperty<AbstractPlacement, string>("NearestRoom", GetDefaultLocationNearestRoom);
         }
 
         /// <inheritdoc/>
@@ -64,8 +59,7 @@ namespace ConnectionMetadataInjector
             LogGroupCounts(locationPools);
 
             IEnumerable<IGrouping<string, string>> locationAreas = Ref.Settings.GetPlacements()
-                .Select(plt => SupplementalMetadata.OfPlacementAndLocations(plt).Get(LocationNearestRoom))
-                .Select(room => SubcategoryFinder.GetRoomMapArea(room))
+                .Select(plt => plt.Items.First().RandoPlacement().Location.LocationDef?.MapArea ?? SubcategoryFinder.OTHER)
                 .GroupBy(x => x);
             Log("Location counts by map area:");
             LogGroupCounts(locationAreas);
@@ -77,10 +71,6 @@ namespace ConnectionMetadataInjector
             HashSet<string> connectionprovidedLocationPools = GetConnectionProvidedValues(Ref.Settings.GetPlacements(),
                 SupplementalMetadata.OfPlacementAndLocations, LocationPoolGroup);
             Log($"Connection-provided item locations: {string.Join(", ", connectionprovidedLocationPools)}");
-
-            HashSet<string> connectionProvidedMapAreas = GetConnectionProvidedValues(Ref.Settings.GetPlacements(),
-                SupplementalMetadata.OfPlacementAndLocations, LocationNearestRoom);
-            Log($"Connection-provided map areas: {string.Join(", ", connectionProvidedMapAreas.Select(SubcategoryFinder.GetRoomMapArea))}");
 
             orig(self);
         }
@@ -117,7 +107,7 @@ namespace ConnectionMetadataInjector
 
         private string GetDefaultLocationNearestRoom(AbstractPlacement placement)
         {
-            return SubcategoryFinder.GetLocationNearestRoom(placement.Items.First().RandoLocation());
+            return placement.Items.First().RandoPlacement().Location.LocationDef?.SceneName ?? SubcategoryFinder.OTHER;
         }
     }
 }
