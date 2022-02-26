@@ -1,6 +1,5 @@
 ﻿using ConnectionMetadataInjector.Util;
 using ItemChanger;
-using ItemChanger.Internal;
 using Modding;
 using System;
 using System.Collections.Generic;
@@ -38,44 +37,16 @@ namespace ConnectionMetadataInjector
             LocationPoolGroup = new MetadataProperty<AbstractPlacement, string>("PoolGroup", GetDefaultLocationPoolGroup);
         }
 
-        /// <inheritdoc/>
-        public override void Initialize()
-        {
-            On.GameCompletionScreen.Start += GameCompletionScreen_Start;
-        }
-
-        private void GameCompletionScreen_Start(On.GameCompletionScreen.orig_Start orig, GameCompletionScreen self)
-        {
-            IEnumerable<IGrouping<string, string>> itemPools = Ref.Settings.GetItems()
-                .Select(item => SupplementalMetadata.Of(item).Get(ItemPoolGroup))
-                .GroupBy(x => x);
-            Log("Item counts by pool group:");
-            LogGroupCounts(itemPools);
-
-            IEnumerable<IGrouping<string, string>> locationPools = Ref.Settings.GetPlacements()
-                .Select(plt => SupplementalMetadata.OfPlacementAndLocations(plt).Get(LocationPoolGroup))
-                .GroupBy(x => x);
-            Log("Location counts by pool group:");
-            LogGroupCounts(locationPools);
-
-            IEnumerable<IGrouping<string, string>> locationAreas = Ref.Settings.GetPlacements()
-                .Select(plt => plt.Items.First().RandoPlacement().Location.LocationDef?.MapArea ?? SubcategoryFinder.OTHER)
-                .GroupBy(x => x);
-            Log("Location counts by map area:");
-            LogGroupCounts(locationAreas);
-
-            HashSet<string> connectionProvidedItemPools = GetConnectionProvidedValues(Ref.Settings.GetItems(), 
-                SupplementalMetadata.Of<AbstractItem>, ItemPoolGroup);
-            Log($"Connection-provided item pools: {string.Join(", ", connectionProvidedItemPools)}");
-
-            HashSet<string> connectionprovidedLocationPools = GetConnectionProvidedValues(Ref.Settings.GetPlacements(),
-                SupplementalMetadata.OfPlacementAndLocations, LocationPoolGroup);
-            Log($"Connection-provided item locations: {string.Join(", ", connectionprovidedLocationPools)}");
-
-            orig(self);
-        }
-
-        private HashSet<TValue> GetConnectionProvidedValues<TObject, TValue>(
+        /// <summary>
+        /// Gets connection-provided (i.e. non-default) values for a metadata property
+        /// </summary>
+        /// <typeparam name="TObject">The type of object holding the metadata</typeparam>
+        /// <typeparam name="TValue">The value type of the property</typeparam>
+        /// <param name="objects">The objects to check for values</param>
+        /// <param name="metadataSelector">How to get metadata for a given object, usually one of the static methods of <see cref="SupplementalMetadata"/></param>
+        /// <param name="prop">The property to get values for</param>
+        /// <returns>A set of unique values provided by connections</returns>
+        public static HashSet<TValue> GetConnectionProvidedValues<TObject, TValue>(
             IEnumerable<TObject> objects,
             Func<TObject, SupplementalMetadata<TObject>> metadataSelector,
             MetadataProperty<TObject, TValue> prop) where TObject : TaggableObject
@@ -85,14 +56,6 @@ namespace ConnectionMetadataInjector
                 .Where(md => md.IsNonDefault(prop))
                 .Select(md => md.Get(prop))
             );
-        }
-
-        private void LogGroupCounts(IEnumerable<IGrouping<string, string>> groups)
-        {
-            foreach (var group in groups)
-            {
-                Log($"{group.Key}: {group.Count()}");
-            }
         }
 
         private string GetDefaultItemPoolGroup(AbstractItem item)
