@@ -102,12 +102,7 @@ namespace ConnectionMetadataInjector
 
         private string GetDefaultLocationPoolGroup(AbstractPlacement placement)
         {
-            return SubcategoryFinder.GetLocationPoolGroup(placement.Items.First().RandoLocation()).FriendlyName();
-        }
-
-        private string GetDefaultLocationNearestRoom(AbstractPlacement placement)
-        {
-            return placement.Items.First().RandoPlacement().Location.LocationDef?.SceneName ?? SubcategoryFinder.OTHER;
+            return SubcategoryFinder.GetLocationPoolGroup(placement.RandoLocation()).FriendlyName();
         }
     }
 }
