@@ -44,10 +44,13 @@ namespace ConnectionMetadataInjector.Util
     /// <summary>
     /// Extension methods providing additional behavior to <see cref="PoolGroup"/>s.
     /// </summary>
-    internal static class PoolExtensions
+    public static class PoolExtensions
     {
         private static readonly Regex nameFormatter = new(@"([^A-Z])(?=[A-Z])");
 
+        /// <summary>
+        /// Gets the friendly name of the pool group, with spaces and necessary punctuation
+        /// </summary>
         public static string FriendlyName(this PoolGroup group)
         {
             return nameFormatter.Replace(group.ToString(), "$1 ");

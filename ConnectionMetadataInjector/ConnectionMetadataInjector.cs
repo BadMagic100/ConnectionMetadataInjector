@@ -12,30 +12,17 @@ namespace ConnectionMetadataInjector
     /// </summary>
     public class ConnectionMetadataInjector : Mod
     {
-        internal static ConnectionMetadataInjector? Instance;
-
         /// <summary>
         /// A property representing the pool group of an item
         /// </summary>
-        public readonly MetadataProperty<AbstractItem, string> ItemPoolGroup;
+        public static readonly MetadataProperty<AbstractItem, string> ItemPoolGroup = new("PoolGroup", GetDefaultItemPoolGroup);
         /// <summary>
         /// A property representing the location of a placement
         /// </summary>
-        public readonly MetadataProperty<AbstractPlacement, string> LocationPoolGroup;
+        public static readonly MetadataProperty<AbstractPlacement, string> LocationPoolGroup = new("PoolGroup", GetDefaultLocationPoolGroup);
 
         /// <inheritdoc/>
         public override string GetVersion() => GetType().Assembly.GetName().Version.ToString();
-
-        /// <summary>
-        /// Creates an instance of the mod
-        /// </summary>
-        public ConnectionMetadataInjector() : base()
-        {
-            Instance = this;
-
-            ItemPoolGroup = new MetadataProperty<AbstractItem, string>("PoolGroup", GetDefaultItemPoolGroup);
-            LocationPoolGroup = new MetadataProperty<AbstractPlacement, string>("PoolGroup", GetDefaultLocationPoolGroup);
-        }
 
         /// <summary>
         /// Gets connection-provided (i.e. non-default) values for a metadata property
@@ -58,12 +45,12 @@ namespace ConnectionMetadataInjector
             );
         }
 
-        private string GetDefaultItemPoolGroup(AbstractItem item)
+        private static string GetDefaultItemPoolGroup(AbstractItem item)
         {
             return SubcategoryFinder.GetItemPoolGroup(item.RandoItem()).FriendlyName();
         }
 
-        private string GetDefaultLocationPoolGroup(AbstractPlacement placement)
+        private static string GetDefaultLocationPoolGroup(AbstractPlacement placement)
         {
             return SubcategoryFinder.GetLocationPoolGroup(placement.RandoLocation()).FriendlyName();
         }

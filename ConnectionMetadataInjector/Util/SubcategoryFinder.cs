@@ -69,7 +69,7 @@ namespace ConnectionMetadataInjector.Util
 				}
 			}
 
-			log.LogWarn($"{item.Name} not found in item PoolDefs");
+			log.LogFine($"{item.Name} not found in item PoolDefs");
 			return PoolGroup.Other;
 		}
 
@@ -102,7 +102,7 @@ namespace ConnectionMetadataInjector.Util
 				}
 			}
 
-			log.LogWarn($"{location.Name} not found in location PoolDefs");
+			log.LogFine($"{location.Name} not found in location PoolDefs");
 			return PoolGroup.Other;
 		}
 
@@ -116,7 +116,7 @@ namespace ConnectionMetadataInjector.Util
 			{
 				return Data.GetTransitionDef(transition).MapArea;
 			}
-			log.LogWarn($"{transition} not found in TransitionDefs");
+			log.LogFine($"{transition} not found in TransitionDefs");
 			return OTHER;
 		}
 	}
