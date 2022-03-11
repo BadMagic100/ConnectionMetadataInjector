@@ -25,6 +25,11 @@ namespace ConnectionMetadataInjector
         public override string GetVersion() => GetType().Assembly.GetName().Version.ToString();
 
         /// <summary>
+        /// Parameterless constructor. Set in-game name so it's shorter
+        /// </summary>
+        public ConnectionMetadataInjector() : base("CMICore") { }
+
+        /// <summary>
         /// Gets connection-provided (i.e. non-default) values for a metadata property
         /// </summary>
         /// <typeparam name="TObject">The type of object holding the metadata</typeparam>
