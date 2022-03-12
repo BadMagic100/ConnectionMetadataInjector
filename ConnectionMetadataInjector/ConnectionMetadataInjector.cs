@@ -20,6 +20,10 @@ namespace ConnectionMetadataInjector
         /// A property representing the location of a placement
         /// </summary>
         public static readonly MetadataProperty<AbstractPlacement, string> LocationPoolGroup = new("PoolGroup", GetDefaultLocationPoolGroup);
+        /// <summary>
+        /// A property representing the mod that defined a given taggable
+        /// </summary>
+        public static readonly MetadataProperty<TaggableObject, string?> ModSource = new("ModSource", (_) => null);
 
         /// <inheritdoc/>
         public override string GetVersion() => GetType().Assembly.GetName().Version.ToString();
@@ -41,7 +45,7 @@ namespace ConnectionMetadataInjector
         public static HashSet<TValue> GetConnectionProvidedValues<TObject, TValue>(
             IEnumerable<TObject> objects,
             Func<TObject, SupplementalMetadata<TObject>> metadataSelector,
-            MetadataProperty<TObject, TValue> prop) where TObject : TaggableObject
+            IMetadataProperty<TObject, TValue> prop) where TObject : TaggableObject
         {
             return new HashSet<TValue>(objects
                 .Select(item => metadataSelector(item))

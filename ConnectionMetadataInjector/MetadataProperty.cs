@@ -8,14 +8,14 @@ namespace ConnectionMetadataInjector
     /// </summary>
     /// <typeparam name="TObject">The type of object that this property is defined for (i.e. the type of object that holds the tag)</typeparam>
     /// <typeparam name="TValue">The type of the value of the property</typeparam>
-    public class MetadataProperty<TObject, TValue> where TObject : TaggableObject
+    public class MetadataProperty<TObject, TValue> : IMetadataProperty<TObject, TValue> 
+        where TObject : TaggableObject
     {
-        /// <summary>
-        /// The property name expected in the tag
-        /// </summary>
+        /// <inheritdoc/>
         public string Name { get; private init; }
 
-        internal Func<TObject, TValue> GetDefault { get; private init; }
+        private readonly Func<TObject, TValue> getDefault;
+        Func<TObject, TValue> IMetadataProperty<TObject, TValue>.GetDefault => getDefault;
 
         /// <summary>
         /// Declares a metadata property with a default value
@@ -25,7 +25,7 @@ namespace ConnectionMetadataInjector
         public MetadataProperty(string name, TValue defaultValue)
         {
             Name = name;
-            GetDefault = _ => defaultValue;
+            getDefault = _ => defaultValue;
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace ConnectionMetadataInjector
         public MetadataProperty(string name, Func<TObject, TValue> handleDefaultValue)
         {
             Name = name;
-            GetDefault = handleDefaultValue;
+            getDefault = handleDefaultValue;
         }
     }
 }

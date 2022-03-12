@@ -29,7 +29,7 @@ namespace ConnectionMetadataInjector
         /// True, if this object contains a supplmental metadata tag with the requested property.
         /// Otherwise, false.
         /// </returns>
-        public bool IsNonDefault<TValue>(MetadataProperty<TObject, TValue> property)
+        public bool IsNonDefault<TValue>(IMetadataProperty<TObject, TValue> property)
         {
             return tag != null && tag.TryGetProperty(property.Name, out TValue _);
         }
@@ -43,7 +43,7 @@ namespace ConnectionMetadataInjector
         /// The value of the property, if this object contains a supplemental metadata tag with the requested property.
         /// Otherwise, returns the default value of the property for this object.
         /// </returns>
-        public TValue Get<TValue>(MetadataProperty<TObject, TValue> property)
+        public TValue Get<TValue>(IMetadataProperty<TObject, TValue> property)
         {
             if (tag != null && tag.TryGetProperty(property.Name, out TValue value))
             {

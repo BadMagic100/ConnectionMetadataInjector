@@ -17,6 +17,7 @@ ConnectionMetadataInjector supports a handful of default metadata properties tha
 | Property | Property type | Parent object type | Description | Default handling |
 | -------- | ------------- | ------------------ | ----------- | ---------------- |
 | `PoolGroup` | `string` | AbstractItem, AbstractLocation, or AbstractPlacement (usually item or location) | The human-readable pool group of an item or location with spaces and punctuation, such as "Relics" or "Lifeblood Cocoons". This allows small pools to be aggregated up into larger logical groups, i.e. treating "Swim" as part of the "Skills" group rather than the "Swim" group. | For items, attempts to find the split group name in PoolDefs. For locations, attempts to infer the vanilla item name from the location name with standard naming conventions (i.e. `Item_Name-Unique_Location`), then attempts to find the split group name of the item in PoolDefs |
+| `ModSource` | `string?` | TaggableObject | The name of the mod that provided the metadata | `null` |
 
 ## Property API
 
