@@ -25,19 +25,15 @@ namespace ConnectionMetadataInjector.Util
 		public const string OTHER = "Other";
 
 		/// <summary>
-		/// Gets the pool group of a rando item by its name. You probably want to be using <see cref="ConnectionMetadataInjector.ItemPoolGroup"/> to handle custom items.
+		/// Gets the pool group of a rando item by its name. You probably want to be using <see cref="ConnectionMetadataInjector.ItemPoolGroup"/> to handle custom items
+		/// if you're trying to get data for an IC item with defined rando data
 		/// </summary>
 		/// <param name="item">The item to check</param>
-		public static PoolGroup GetItemPoolGroup(RandoModItem? item)
-		{
-			if (item == null)
-            {
-				return PoolGroup.Other;
-            }
-
+		public static PoolGroup GetItemPoolGroup(string item)
+        {
 			// these items are not present in any pool's IncludeItems, but are well-defined by base rando (e.g. they are in items.json)
-			switch (item.Name)
-            {
+			switch (item)
+			{
 				case "Dreamer":
 					return PoolGroup.Dreamers;
 				case "Downslash":
@@ -54,13 +50,13 @@ namespace ConnectionMetadataInjector.Util
 					return PoolGroup.GeoChests;
 				default:
 					break;
-            }
+			}
 
 			foreach (PoolDef poolDef in Data.Pools)
 			{
 				foreach (string includeItem in poolDef.IncludeItems)
 				{
-					if (includeItem == item.Name)
+					if (includeItem == item)
 					{
 						PoolGroup group = (PoolGroup)Enum.Parse(typeof(PoolGroup), poolDef.Group);
 
@@ -69,22 +65,33 @@ namespace ConnectionMetadataInjector.Util
 				}
 			}
 
-			log.LogFine($"{item.Name} not found in item PoolDefs");
+			log.LogFine($"{item} not found in item PoolDefs");
 			return PoolGroup.Other;
 		}
 
 		/// <summary>
-		/// Gets the pool group of a rando location. You probably want to be using <see cref="ConnectionMetadataInjector.LocationPoolGroup"/> to handle custom locations.
+		/// Gets the pool group of a rando item by its name. You probably want to be using <see cref="ConnectionMetadataInjector.ItemPoolGroup"/> to handle custom items
+		/// if you're trying to get data for an IC item with defined rando data
 		/// </summary>
-		/// <param name="location">The location name, e.g. "Mimic_Grub-Crystal_Peak" or "Isma's_Tear"</param>
-		public static PoolGroup GetLocationPoolGroup(RandoModLocation? location)
+		/// <param name="item">The item to check</param>
+		public static PoolGroup GetItemPoolGroup(RandoModItem? item)
 		{
-			if (location == null)
+			if (item == null)
             {
 				return PoolGroup.Other;
             }
 
-			if (ShopNames.Contains(location.Name))
+			return GetItemPoolGroup(item.Name);
+		}
+
+		/// <summary>
+		/// Gets the pool group of a rando location. You probably want to be using <see cref="ConnectionMetadataInjector.LocationPoolGroup"/> to handle custom locations.
+		/// if you're trying to get data for an IC placement or location with defined rando data
+		/// </summary>
+		/// <param name="location">The location to check</param>
+		public static PoolGroup GetLocationPoolGroup(string location)
+        {
+			if (ShopNames.Contains(location))
 			{
 				return PoolGroup.Shops;
 			}
@@ -93,7 +100,7 @@ namespace ConnectionMetadataInjector.Util
 			{
 				foreach (string includeLocation in poolDef.IncludeLocations)
 				{
-					if (includeLocation == location.Name)
+					if (includeLocation == location)
 					{
 						PoolGroup group = (PoolGroup)Enum.Parse(typeof(PoolGroup), poolDef.Group);
 
@@ -102,8 +109,23 @@ namespace ConnectionMetadataInjector.Util
 				}
 			}
 
-			log.LogFine($"{location.Name} not found in location PoolDefs");
+			log.LogFine($"{location} not found in location PoolDefs");
 			return PoolGroup.Other;
+		}
+
+		/// <summary>
+		/// Gets the pool group of a rando location. You probably want to be using <see cref="ConnectionMetadataInjector.LocationPoolGroup"/> to handle custom locations
+		/// if you're trying to get data for an IC placement or location with defined rando data
+		/// </summary>
+		/// <param name="location">The location to check</param>
+		public static PoolGroup GetLocationPoolGroup(RandoModLocation? location)
+		{
+			if (location == null)
+            {
+				return PoolGroup.Other;
+            }
+
+			return GetLocationPoolGroup(location.Name);
 		}
 
 		/// <summary>
