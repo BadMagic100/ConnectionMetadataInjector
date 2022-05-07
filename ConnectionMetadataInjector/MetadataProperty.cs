@@ -8,7 +8,7 @@ namespace ConnectionMetadataInjector
     /// </summary>
     /// <typeparam name="TObject">The type of object that this property is defined for (i.e. the type of object that holds the tag)</typeparam>
     /// <typeparam name="TValue">The type of the value of the property</typeparam>
-    public class MetadataProperty<TObject, TValue> : IMetadataProperty<TObject, TValue> 
+    public class MetadataProperty<TObject, TValue> : IMetadataProperty<TObject, TValue>
         where TObject : TaggableObject
     {
         /// <inheritdoc/>
