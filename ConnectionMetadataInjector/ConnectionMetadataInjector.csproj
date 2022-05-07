@@ -51,9 +51,6 @@
       <DocumentationFile>bin\Release\ConnectionMetadataInjector.xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-      <None Remove="Util\RandoExtensions.cs~RF7311dc95.TMP" />
-    </ItemGroup>
-    <ItemGroup>
         <Reference Include="ItemChanger">
             <HintPath>$(HollowKnightRefs)\Mods\ItemChanger\ItemChanger.dll</HintPath>
         </Reference>

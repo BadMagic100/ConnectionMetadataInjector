@@ -132,6 +132,10 @@ namespace ConnectionMetadataInjector.Util
         /// Gets the map area of a transition. Transitions aren't taggable, so use this if needed; transitions in custom map areas will always return "Other"
         /// </summary>
         /// <param name="transition">The transition name, e.g. "Crossroads_01[top1]"</param>
+        [Obsolete("Transition map area is available via Rando's transition placement context. " +
+            "When possible, getting attributes from the rando context is preferred as it is possible for connections to provide data this way." +
+            "See https://github.com/BadMagic100/HollowKnight.Rando4Stats/blob/bb50b5bb360e2d76e95fbab578fb195e484262dd/Rando4Stats/Stats/TransitionsVisited/TransitionsVisitedByMapArea.cs#L40" +
+            "for an example.")]
         public static string GetTransitionMapArea(string transition)
         {
             if (Data.IsTransition(transition))
