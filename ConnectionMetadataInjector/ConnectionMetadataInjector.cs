@@ -56,12 +56,12 @@ namespace ConnectionMetadataInjector
 
         private static string GetDefaultItemPoolGroup(AbstractItem item)
         {
-            return SubcategoryFinder.GetItemPoolGroup(item.RandoItem()).FriendlyName();
+            return SubcategoryFinder.GetItemPoolGroup(item.name).FriendlyName();
         }
 
         private static string GetDefaultLocationPoolGroup(AbstractPlacement placement)
         {
-            return SubcategoryFinder.GetLocationPoolGroup(placement.RandoLocation()).FriendlyName();
+            return SubcategoryFinder.GetLocationPoolGroup(placement.Name).FriendlyName();
         }
     }
 }
