@@ -7,6 +7,7 @@
         <Product>ConnectionMetadataInjector</Product>
         <Description>A Hollow Knight Mod</Description>
         <Copyright>Copyright © BadMagic100 2022</Copyright>
+        <NoWarn>CS7035</NoWarn>
         <AssemblyVersion>2.0.*</AssemblyVersion>
         <Deterministic>false</Deterministic>
         <OutputPath>bin\$(Configuration)\</OutputPath>

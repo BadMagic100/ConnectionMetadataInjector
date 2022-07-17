@@ -16,7 +16,7 @@ namespace ConnectionMetadataInjector.Util
         public const string OTHER = "Other";
 
         /// <summary>
-        /// Gets the pool group of a rando item by its name. You probably want to be using <see cref="ConnectionMetadataInjector.ItemPoolGroup"/> to handle custom items
+        /// Gets the pool group of a rando item by its name. You probably want to be using <see cref="InjectedProps.ItemPoolGroup"/> to handle custom items
         /// if you're trying to get data for an IC item with defined rando data
         /// </summary>
         /// <param name="item">The item to check</param>
@@ -32,7 +32,7 @@ namespace ConnectionMetadataInjector.Util
         }
 
         /// <summary>
-        /// Gets the pool group of a rando location. You probably want to be using <see cref="ConnectionMetadataInjector.LocationPoolGroup"/> to handle custom locations.
+        /// Gets the pool group of a rando location. You probably want to be using <see cref="InjectedProps.LocationPoolGroup"/> to handle custom locations.
         /// if you're trying to get data for an IC placement or location with defined rando data
         /// </summary>
         /// <param name="location">The location to check</param>
