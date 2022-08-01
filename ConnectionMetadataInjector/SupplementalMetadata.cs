@@ -12,12 +12,12 @@ namespace ConnectionMetadataInjector
     public class SupplementalMetadata<TObject> where TObject : TaggableObject
     {
         private readonly TObject obj;
-        private readonly IInteropTag? tag;
+        private readonly IEnumerable<IInteropTag> tags;
 
-        internal SupplementalMetadata(TObject obj, IInteropTag? tag)
+        internal SupplementalMetadata(TObject obj, IEnumerable<IInteropTag> tags)
         {
             this.obj = obj;
-            this.tag = tag;
+            this.tags = tags;
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace ConnectionMetadataInjector
         /// </returns>
         public bool IsNonDefault<TValue>(IMetadataProperty<TObject, TValue> property)
         {
-            return tag != null && tag.TryGetProperty(property.Name, out TValue _);
+            return tags.Any(t => t.TryGetProperty(property.Name, out TValue _));
         }
 
         /// <summary>
@@ -45,9 +45,14 @@ namespace ConnectionMetadataInjector
         /// </returns>
         public TValue Get<TValue>(IMetadataProperty<TObject, TValue> property)
         {
-            if (tag != null && tag.TryGetProperty(property.Name, out TValue value))
+            // keeping as a tuple lets us distinguish between our query failing to return a result vs the provided value being explicitly null
+            // default(T) for a value tuple is the normal struct you'd expect to see, ie it would make hasValue false when we expect it to be true
+            (bool hasValue, TValue value) result = tags.Select(t => (t.TryGetProperty(property.Name, out TValue value), value))
+                .Where(r => r.Item1)
+                .FirstOrDefault();
+            if (result.hasValue)
             {
-                return value;
+                return result.value;
             }
             else
             {
@@ -74,7 +79,7 @@ namespace ConnectionMetadataInjector
         public static SupplementalMetadata<TObject> Of<TObject>(TObject obj) where TObject : TaggableObject
         {
             IEnumerable<IInteropTag> metaTags = obj.GetTags<IInteropTag>().Where(t => t.Message == InteropTagMessage);
-            return new SupplementalMetadata<TObject>(obj, metaTags.FirstOrDefault());
+            return new SupplementalMetadata<TObject>(obj, metaTags);
         }
 
         /// <summary>
@@ -85,7 +90,7 @@ namespace ConnectionMetadataInjector
         public static SupplementalMetadata<AbstractPlacement> OfPlacementAndLocations(AbstractPlacement plt)
         {
             IEnumerable<IInteropTag> metaTags = plt.GetPlacementAndLocationTags().OfType<IInteropTag>().Where(t => t.Message == InteropTagMessage);
-            return new SupplementalMetadata<AbstractPlacement>(plt, metaTags.FirstOrDefault());
+            return new SupplementalMetadata<AbstractPlacement>(plt, metaTags);
         }
     }
 }
