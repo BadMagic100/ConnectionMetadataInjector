@@ -1,5 +1,6 @@
 ﻿using ItemChanger;
 using ItemChanger.Tags;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -72,14 +73,22 @@ namespace ConnectionMetadataInjector
         public const string InteropTagMessage = "RandoSupplementalMetadata";
 
         /// <summary>
-        /// Gets the supplemental metadata of an object
+        /// Gets the supplemental metadata of an object, and if it's a placement, its underlying locations as well.
         /// </summary>
         /// <typeparam name="TObject">The type of the object; usually inferred</typeparam>
         /// <param name="obj">The object</param>
         public static SupplementalMetadata<TObject> Of<TObject>(TObject obj) where TObject : TaggableObject
         {
-            IEnumerable<IInteropTag> metaTags = obj.GetTags<IInteropTag>().Where(t => t.Message == InteropTagMessage);
-            return new SupplementalMetadata<TObject>(obj, metaTags);
+            IEnumerable<IInteropTag> interopTags;
+            if (obj is AbstractPlacement plt)
+            {
+                interopTags = plt.GetPlacementAndLocationTags().OfType<IInteropTag>();
+            }
+            else
+            {
+                interopTags = obj.GetTags<IInteropTag>();
+            }
+            return new SupplementalMetadata<TObject>(obj, interopTags.Where(t => t.Message == InteropTagMessage));
         }
 
         /// <summary>
@@ -87,9 +96,20 @@ namespace ConnectionMetadataInjector
         /// <see cref="Of{TObject}(TObject)"/> to get information about an <see cref="AbstractLocation"/>, you probably want this instead.
         /// </summary>
         /// <param name="plt">The placement</param>
+        [Obsolete("The default behavior SupplementalMetadata.Of for placements has changed to do this, use that instead.", true)]
         public static SupplementalMetadata<AbstractPlacement> OfPlacementAndLocations(AbstractPlacement plt)
         {
             IEnumerable<IInteropTag> metaTags = plt.GetPlacementAndLocationTags().OfType<IInteropTag>().Where(t => t.Message == InteropTagMessage);
+            return new SupplementalMetadata<AbstractPlacement>(plt, metaTags);
+        }
+
+        /// <summary>
+        /// Gets the supplemental metadata of a placement only (and not its underlying locations).
+        /// </summary>
+        /// <param name="plt">The placement</param>
+        public static SupplementalMetadata<AbstractPlacement> OfPlacementOnly(AbstractPlacement plt)
+        {
+            IEnumerable<IInteropTag> metaTags = plt.GetTags<IInteropTag>().Where(t => t.Message == InteropTagMessage);
             return new SupplementalMetadata<AbstractPlacement>(plt, metaTags);
         }
     }
