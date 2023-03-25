@@ -1,4 +1,5 @@
 ﻿using ItemChanger;
+using ItemChanger.Tags;
 using System;
 
 namespace ConnectionMetadataInjector
@@ -16,5 +17,7 @@ namespace ConnectionMetadataInjector
         public string Name { get; }
 
         internal Func<TObject, TValue> GetDefault { get; }
+
+        internal bool TryGetValue(IInteropTag tag, out TValue? value);
     }
 }
