@@ -48,12 +48,12 @@ namespace ConnectionMetadataInjector
         {
             // keeping as a tuple lets us distinguish between our query failing to return a result vs the provided value being explicitly null
             // default(T) for a value tuple is the normal struct you'd expect to see, ie it would make hasValue false when we expect it to be true
-            (bool hasValue, TValue value) result = tags.Select(t => (t.TryGetProperty(property.Name, out TValue value), value))
+            (bool hasValue, TValue? value) result = tags.Select(t => (t.TryGetProperty(property.Name, out TValue? value), value))
                 .Where(r => r.Item1)
                 .FirstOrDefault();
             if (result.hasValue)
             {
-                return result.value;
+                return result.value!;
             }
             else
             {
